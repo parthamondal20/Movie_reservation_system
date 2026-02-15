@@ -1,0 +1,184 @@
+/* ── Screen Curve ── */
+.screen-curve {
+    width: 80%;
+    max-width: 400px;
+    height: 14px;
+    margin: 0 auto 2.5rem;
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.25) 0%, transparent 100%);
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    position: relative;
+}
+
+.screen-curve::after {
+    content: "SCREEN";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(245, 158, 11, 0.4);
+    font-weight: 600;
+}
+
+/* ── Seat Grid ── */
+.seat-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 0 1rem;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.seat-row-label {
+    width: 20px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.25);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* ── Individual Seat ── */
+.seat {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px 6px 8px 8px;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: transparent;
+}
+
+.seat:hover:not(.seat-taken):not(.seat-selected) {
+    border-color: rgba(245, 158, 11, 0.5);
+    background: rgba(245, 158, 11, 0.08);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.seat-selected {
+    background: #f59e0b !important;
+    border-color: #f59e0b !important;
+    color: #030712 !important;
+    font-weight: 700;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    transform: scale(1.05);
+}
+
+.seat-taken {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: transparent !important;
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.seat-gap {
+    width: 18px;
+}
+
+/* ── Legend ── */
+.seat-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.legend-dot.available {
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.legend-dot.selected {
+    background: #f59e0b;
+}
+
+.legend-dot.taken {
+    background: rgba(255, 255, 255, 0.06);
+    opacity: 0.4;
+}
+
+/* ── Showtime Pills ── */
+.showtime-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.showtime-pill:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    color: white;
+}
+
+.showtime-pill.active {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.5);
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+/* ── Booking Summary ── */
+.booking-summary {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1.25rem;
+    backdrop-filter: blur(8px);
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .seat {
+        width: 26px;
+        height: 26px;
+        border-radius: 5px 5px 6px 6px;
+    }
+
+    .seat-gap {
+        width: 12px;
+    }
+
+    .seat-row {
+        gap: 4px;
+    }
+
+    .seat-grid {
+        gap: 4px;
+    }
+}

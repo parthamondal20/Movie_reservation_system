@@ -1,0 +1,142 @@
+/* ── Fullscreen / Inline wrappers ── */
+.loader-fullscreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #030712;
+}
+
+.loader-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+}
+
+/* ── Inner container ── */
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    animation: loaderFadeIn 0.4s ease-out;
+}
+
+@keyframes loaderFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Logo ── */
+.loader-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.025em;
+    animation: logoPulse 2s ease-in-out infinite;
+}
+
+.loader-logo span {
+    color: #f59e0b;
+}
+
+@keyframes logoPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ── Film Reel Spinner ── */
+.loader-reel {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    animation: reelSpin 1.2s linear infinite;
+}
+
+.reel-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2.5px solid rgba(245, 158, 11, 0.15);
+    border-top-color: #f59e0b;
+}
+
+.reel-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f59e0b;
+}
+
+.dot-1 {
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dot-2 {
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dot-3 {
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.dot-4 {
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@keyframes reelSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Shimmer loading bar ── */
+.loader-bar {
+    width: 120px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.loader-bar-fill {
+    width: 40%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+    animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-150%);
+    }
+
+    100% {
+        transform: translateX(400%);
+    }
+}
