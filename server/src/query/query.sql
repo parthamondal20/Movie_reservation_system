@@ -1,1 +1,56 @@
-ALTER TABLE users ADD COLUMN name VARCHAR(50);
+-- INSERT INTO movies (title, description, release_date, duration, genre, poster, rating) VALUES
+-- ('Inception', 'A thief enters dreams to steal secrets.', '2010-07-16', '2h 28m', 'Sci-Fi', 'https://i.pinimg.com/1200x/b0/ae/a4/b0aea49646879a043ad9f6ec3002e99f.jpg', 8.8),
+-- ('The Dark Knight', 'Batman faces the Joker.', '2008-07-18', '2h 32m', 'Action', 'https://i.pinimg.com/1200x/5f/fe/79/5ffe79003530da912a82acac80be1426.jpg', 9.0),
+-- ('Avengers: Endgame', 'Heroes assemble for the final battle.', '2019-04-26', '3h 2m', 'Action', 'https://i.pinimg.com/1200x/95/26/68/9526684fe11e38cf6bb6fbd48e37de6a.jpg', 8.4),
+-- ('Titanic', 'A tragic love story on the Titanic.', '1997-12-19', '3h 14m', 'Romance', 'https://i.pinimg.com/736x/41/49/e8/4149e88bc78090b7232ce51bd4270e99.jpg', 7.9),
+-- ('Gladiator', 'A Roman general seeks revenge.', '2000-05-05', '2h 35m', 'Drama', 'https://i.pinimg.com/1200x/49/22/6c/49226cc2be5cb537218993fa89d075a8.jpg', 8.5),
+-- ('Joker', 'The origin story of a villain.', '2019-10-04', '2h 2m', 'Crime', 'https://i.pinimg.com/1200x/44/da/67/44da67389daab7a5ccd36679d8fa58a8.jpg', 8.4),
+-- ('The Matrix', 'A hacker discovers reality is a simulation.', '1999-03-31', '2h 16m', 'Sci-Fi', 'https://i.pinimg.com/736x/ed/45/16/ed4516338fa5df348c13a2a7ce1e7998.jpg', 8.7),
+-- ('Forrest Gump', 'Life journey of a simple man.', '1994-07-06', '2h 22m', 'Drama', 'https://i.pinimg.com/1200x/02/6b/0d/026b0d4dab1abe1c5f4460d6a45ae2ab.jpg', 8.8),
+-- ('The Shawshank Redemption', 'Hope inside a prison.', '1994-09-23', '2h 22m', 'Drama', 'https://i.pinimg.com/1200x/08/6f/fe/086ffeccab22baa2b4d49ab8787f9b90.jpg', 9.3),
+-- ('Fight Club', 'An underground fight revolution.', '1999-10-15', '2h 19m', 'Drama', 'https://i.pinimg.com/736x/a0/12/3a/a0123abd277478eb908136e0c3c070e9.jpg', 8.8),
+-- ('The Godfather', 'Mafia family saga.', '1972-03-24', '2h 55m', 'Crime', 'https://i.pinimg.com/1200x/3a/2d/34/3a2d34f0a80d0a462ed5b953df963a3e.jpg', 9.2),
+-- ('The Godfather Part II', 'The saga continues.', '1974-12-20', '3h 22m', 'Crime', 'https://i.pinimg.com/736x/b3/1f/52/b31f52ec1c0858b1ed3d9e0370ef73f9.jpg', 9.0),
+-- ('The Prestige', 'Two magicians rivalry.', '2006-10-20', '2h 10m', 'Thriller', 'https://i.pinimg.com/1200x/cc/95/79/cc95794114a7c07872c96338778d3bf9.jpg', 8.5),
+-- ('Whiplash', 'A drummer pushed to limits.', '2014-10-10', '1h 47m', 'Drama', 'https://i.pinimg.com/736x/d7/93/ad/d793ad13cfa32068f3a083ca494641d6.jpg', 8.5),
+-- ('The Lion King', 'A lion cub becomes king.', '1994-06-24', '1h 28m', 'Animation', 'https://i.pinimg.com/1200x/fd/0c/44/fd0c44fd41b80385b1a21999a42195f9.jpg', 8.5),
+-- ('Pulp Fiction', 'Interwoven crime stories.', '1994-10-14', '2h 34m', 'Crime', 'https://i.pinimg.com/1200x/89/41/e7/8941e71464be8fe81ade92a86817338e.jpg', 8.9),
+-- ('The Social Network', 'Birth of Facebook.', '2010-10-01', '2h 0m', 'Biography', 'https://i.pinimg.com/1200x/95/a9/06/95a906f5b06478ac7b5793c03348c477.jpg', 7.7),
+-- ('Parasite', 'Class divide thriller.', '2019-05-30', '2h 12m', 'Thriller', 'https://i.pinimg.com/1200x/a9/7d/26/a97d26449214bb756c75b4ed88d7b06e.jpg', 8.6),
+-- ('Django Unchained', 'A freed slave seeks revenge.', '2012-12-25', '2h 45m', 'Western', 'https://i.pinimg.com/1200x/62/40/36/6240363c1e7cc059e032a359ffcc4b77.jpg', 8.4);
+
+-- ('The Avengers', 'Superheroes unite.', '2012-05-04', '2h 23m', 'Action', 'avengers.jpg', 8.0),
+-- ('Iron Man', 'A billionaire builds a suit.', '2008-05-02', '2h 6m', 'Action', 'iron_man.jpg', 7.9),
+-- ('Doctor Strange', 'A surgeon becomes sorcerer.', '2016-11-04', '1h 55m', 'Fantasy', 'doctor_strange.jpg', 7.5),
+-- ('Black Panther', 'Wakanda forever.', '2018-02-16', '2h 14m', 'Action', 'black_panther.jpg', 7.3),
+-- ('Captain America: Civil War', 'Heroes divided.', '2016-05-06', '2h 27m', 'Action', 'civil_war.jpg', 7.8),
+-- ('Thor: Ragnarok', 'Thor vs Hela.', '2017-11-03', '2h 10m', 'Action', 'thor_ragnarok.jpg', 7.9),
+-- ('Spider-Man: No Way Home', 'Multiverse chaos.', '2021-12-17', '2h 28m', 'Action', 'no_way_home.jpg', 8.2),
+-- ('Frozen', 'Sisters and ice magic.', '2013-11-27', '1h 42m', 'Animation', 'frozen.jpg', 7.4),
+-- ('Coco', 'Journey to the Land of the Dead.', '2017-11-22', '1h 45m', 'Animation', 'coco.jpg', 8.4),
+-- ('Up', 'An old man flies his house.', '2009-05-29', '1h 36m', 'Animation', 'up.jpg', 8.2),
+
+-- ('Mad Max: Fury Road', 'Post-apocalyptic chase.', '2015-05-15', '2h 0m', 'Action', 'mad_max.jpg', 8.1),
+-- ('John Wick', 'An ex-hitman returns.', '2014-10-24', '1h 41m', 'Action', 'john_wick.jpg', 7.4),
+-- ('The Departed', 'Undercover cop drama.', '2006-10-06', '2h 31m', 'Crime', 'departed.jpg', 8.5),
+-- ('Se7en', 'Two detectives hunt a killer.', '1995-09-22', '2h 7m', 'Thriller', 'se7en.jpg', 8.6),
+-- ('The Silence of the Lambs', 'A cannibal helps catch killer.', '1991-02-14', '1h 58m', 'Thriller', 'silence_lambs.jpg', 8.6),
+-- ('Shutter Island', 'A mysterious asylum case.', '2010-02-19', '2h 18m', 'Mystery', 'shutter_island.jpg', 8.2),
+-- ('The Wolf of Wall Street', 'Rise of a stockbroker.', '2013-12-25', '3h 0m', 'Biography', 'wolf_wall_street.jpg', 8.2),
+-- ('La La Land', 'Musical romance in LA.', '2016-12-09', '2h 8m', 'Romance', 'la_la_land.jpg', 8.0),
+-- ('The Conjuring', 'Paranormal investigators.', '2013-07-19', '1h 52m', 'Horror', 'conjuring.jpg', 7.5),
+-- ('It', 'A clown terrorizes kids.', '2017-09-08', '2h 15m', 'Horror', 'it.jpg', 7.3),
+
+-- ('The Batman', 'A darker detective story.', '2022-03-04', '2h 56m', 'Action', 'batman_2022.jpg', 7.8),
+-- ('Oppenheimer', 'Story of atomic bomb creator.', '2023-07-21', '3h 0m', 'Biography', 'oppenheimer.jpg', 8.6),
+-- ('Barbie', 'A doll discovers the real world.', '2023-07-21', '1h 54m', 'Comedy', 'barbie.jpg', 7.0),
+-- ('Top Gun: Maverick', 'Return of a fighter pilot.', '2022-05-27', '2h 11m', 'Action', 'topgun_maverick.jpg', 8.3),
+-- ('The Revenant', 'Survival in the wild.', '2015-12-25', '2h 36m', 'Adventure', 'revenant.jpg', 8.0),
+-- ('1917', 'World War I mission.', '2019-12-25', '1h 59m', 'War', '1917.jpg', 8.3),
+-- ('The Grand Budapest Hotel', 'Adventures of a concierge.', '2014-03-28', '1h 39m', 'Comedy', 'grand_budapest.jpg', 8.1),
+-- ('The Irishman', 'Mob hitman story.', '2019-11-27', '3h 29m', 'Crime', 'irishman.jpg', 7.8),
+-- ('Deadpool', 'A sarcastic anti-hero.', '2016-02-12', '1h 48m', 'Action', 'deadpool.jpg', 8.0),
+-- ('Logan', 'An aging Wolverine fights.', '2017-03-03', '2h 17m', 'Action', 'logan.jpg', 8.1);
+
+ALTER TABLE users
+ADD COLUMN refresh_token TEXT NULL;

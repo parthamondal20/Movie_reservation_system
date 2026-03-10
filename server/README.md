@@ -13,3 +13,23 @@ bun run index.ts
 ```
 
 This project was created using `bun init` in bun v1.3.9. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+
+
+// table needed 
+
+Users - done
+
+Movies - done 
+
+Theaters - done 
+
+Screens - done
+
+Shows
+
+Seats
+
+Bookings
+
+Payments

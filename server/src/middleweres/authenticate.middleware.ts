@@ -8,13 +8,13 @@ const authenticateMiddleware = async (req: Request, res: Response, next: NextFun
     try {
         const { accessToken } = req.cookies;
         if (!accessToken) {
-            throw new ApiError(404, "Access token missing");
+            throw new ApiError(401, "Access token missing");
         }
         const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET as string) as JwtPayload;
         req.user = decodedToken;
         next();
     } catch (error) {
-        next(new ApiError(404, "Invalid or expired token"));
+        next(new ApiError(401, "Invalid or expired token"));
     }
 }
 

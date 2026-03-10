@@ -20,7 +20,7 @@ const signUp = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user_id);
     const payload = {
         httpOnly: true,
-        sameSite: "strict" as const,
+        sameSite: "lax" as const,
         secure: process.env.NODE_ENV === "production"
     }
     return res.status(201)
@@ -46,7 +46,7 @@ const login = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user.id);
     const payload = {
         httpOnly: true,
-        sameSite: "strict" as const,
+        sameSite: "lax" as const,
         secure: process.env.NODE_ENV === "production"
     }
     const { password: _, ...newUser } = user;
@@ -75,14 +75,14 @@ interface JwtPayload {
 const generateAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies?.refreshToken;
     if (!incomingRefreshToken) {
-        throw new ApiError(404, "Refresh token is invalid");
+        throw new ApiError(401, "Refresh token is invalid");
     }
     const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET as string) as JwtPayload;
     console.log(decodedToken);
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(decodedToken.id);
     const payload = {
         httpOnly: true,
-        sameSite: "strict" as const,
+        sameSite: "lax" as const,
         secure: process.env.NODE_ENV === "production"
     }
     return res.status(200)

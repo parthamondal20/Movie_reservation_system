@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { useAppDispatch } from "../app/hook/hook";
 import { loginUser } from "../app/features/authSlice";
 import Loader from "../components/Loader";
+import { getMe } from "../services/user";
 export default function SignIn() {
     const [form, setForm] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState<boolean>(false);
@@ -30,7 +31,16 @@ export default function SignIn() {
             setLoading(false);
         }
     };
-
+    const handleGooleLogin = async () => {
+        const server_url = import.meta.env.VITE_SERVER_URL;
+        window.location.href = `${server_url}/auth/google`;
+        try {
+            const user = await getMe();
+            dispatch(loginUser(user));
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message);
+        }
+    }
     if (loading) {
         return <Loader />;
     }
@@ -52,7 +62,7 @@ export default function SignIn() {
 
                 {/* Google Button */}
                 <button
-                    onClick={() => console.log("TODO: Google OAuth")}
+                    onClick={handleGooleLogin}
                     className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-sm font-medium text-gray-300 hover:bg-white/[0.08] hover:text-white transition-all duration-200"
                 >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
