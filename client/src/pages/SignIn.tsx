@@ -5,43 +5,39 @@ import { toast } from "react-hot-toast";
 import { useAppDispatch } from "../app/hook/hook";
 import { loginUser } from "../app/features/authSlice";
 import Loader from "../components/Loader";
-import { getMe } from "../services/user";
+import { useMutation } from "@tanstack/react-query";
 export default function SignIn() {
     const [form, setForm] = useState({ email: "", password: "" });
-    const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            setLoading(true);
-            const user = await login(form);
-            console.log(user);
-            dispatch(loginUser(user));
+
+    const loginMutation = useMutation({
+        mutationFn: (form: any) => login(form),
+        onSuccess: (data) => {
+            console.log(data);
+            dispatch(loginUser(data));
             navigate("/", {
                 replace: true
             })
             toast.success("login successful");
-        } catch (error: any) {
+        },
+        onError: (error: any) => {
             toast.error(error?.response?.data?.message || "failed to signin");
-        } finally {
-            setLoading(false);
         }
+    })
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        loginMutation.mutate(form);
     };
-    const handleGooleLogin = async () => {
+    const handleGooleLogin = () => {
         const server_url = import.meta.env.VITE_SERVER_URL;
         window.location.href = `${server_url}/auth/google`;
-        try {
-            const user = await getMe();
-            dispatch(loginUser(user));
-        } catch (error: any) {
-            toast.error(error?.response?.data?.message);
-        }
     }
-    if (loading) {
+    if (loginMutation.isPending) {
         return <Loader />;
     }
 

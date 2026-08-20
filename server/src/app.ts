@@ -28,8 +28,10 @@ import authenticateMiddleware from "./middleweres/authenticate.middleware";
 import authRoutes from "./routes/auth.route";
 import movieRoutes from "./routes/movie.route";
 import userRoutes from "./routes/user.route";
+import showRoutes from "./routes/shows.route";
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/movies", movieRoutes);
+app.use("/api/v1/shows", showRoutes)
 app.use(authenticateMiddleware);
 app.use("/api/v1/user", userRoutes);
 

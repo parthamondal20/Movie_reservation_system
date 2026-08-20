@@ -19,7 +19,7 @@ const signUp = asyncHandler(async (req, res) => {
     const user_id = newUser.rows[0].id;
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user_id);
     const payload = {
-        httpOnly: true,
+        httpOnly: true, 
         sameSite: "lax" as const,
         secure: process.env.NODE_ENV === "production"
     }

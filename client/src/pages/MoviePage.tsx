@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getMovieById } from "../services/movies";
 import Loader from "../components/Loader";
+import { useQuery } from "@tanstack/react-query";
 
 interface Movie {
     id: number;
@@ -16,32 +17,20 @@ interface Movie {
 
 export default function MoviePage() {
     const { movie_id } = useParams();
-    const [movie, setMovie] = useState<Movie | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-        const fetchMovie = async () => {
-            try {
-                setLoading(true);
-                setError(false);
-                const data = await getMovieById(Number(movie_id));
-                setMovie(data);
-            } catch (err) {
-                console.error("Failed to fetch movie:", err);
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchMovie();
-    }, [movie_id]);
-
+    const {
+        data: movie,
+        isLoading,
+        isError
+    } = useQuery({
+        queryKey: ["movie", movie_id],
+        queryFn: () => getMovieById(Number(movie_id)),
+        enabled: !!movie_id
+    })
     /* ── Loading State ── */
-    if (loading) return <Loader />;
+    if (isLoading) return <Loader />;
 
     /* ── Error / Not Found State ── */
-    if (error || !movie) {
+    if (isError || !movie) {
         return (
             <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center pt-16 px-5 text-center">
                 <div className="w-20 h-20 rounded-2xl bg-gray-900/60 border border-white/[0.06] flex items-center justify-center mb-6">
@@ -138,7 +127,7 @@ export default function MoviePage() {
                             {/* Book Tickets Button (Desktop) */}
                             <div className="hidden sm:flex mt-8 gap-3">
                                 <Link
-                                    to={`/movies/${movie.id}/theaters`}
+                                    to={`/movies/${movie_id}/shows`}
                                     className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-amber-500 text-gray-950 text-sm font-bold hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20 transition-all duration-200"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -221,7 +210,7 @@ export default function MoviePage() {
 
                             {/* Book Tickets CTA in sidebar */}
                             <Link
-                                to={`/movies/${movie.id}/theaters`}
+                                to={`/movies/${movie.id}/shows`}
                                 className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-amber-500 text-gray-950 text-sm font-bold hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20 transition-all duration-200"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4.5 h-4.5">
@@ -244,7 +233,7 @@ export default function MoviePage() {
                         <p className="text-xs text-gray-500">{movie.genre} · {movie.duration}</p>
                     </div>
                     <Link
-                        to={`/movies/${movie.id}/theaters`}
+                        to={`/movies/${movie.id}/shows`}
                         className="flex-shrink-0 px-6 py-2.5 rounded-xl bg-amber-500 text-gray-950 text-sm font-bold hover:bg-amber-400 transition-all duration-200"
                     >
                         Book Tickets

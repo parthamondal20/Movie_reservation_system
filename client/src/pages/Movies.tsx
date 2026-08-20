@@ -1,7 +1,8 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { getMovies } from "../services/movies";
 import Loader from "../components/Loader";
+import { useInfiniteQuery } from "@tanstack/react-query";
 interface Movie {
     id: number,
     title: string;
@@ -15,27 +16,27 @@ interface Movie {
 export default function Movies() {
     const [search, setSearch] = useState("");
     const [selectedGenre, setSelectedGenre] = useState("All");
-    const [lastId, setLastId] = useState<number>(-1);
-    const [movies, setMovies] = useState<Movie[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    useEffect(() => {
-        fetchMovies();
-    }, [])
-    const limit: number = 10;
-    const fetchMovies = async () => {
-        try {
-            setLoading(true);
-            const movies = await getMovies({ lastId, limit });
-            console.log(movies);
-            setMovies(movies);
-            const len = movies.length;
-            setLastId(movies[len - 1].id);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    }
+    const limit: number = 12;
+
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery({
+        queryKey: ["movies"],
+        queryFn: ({ pageParam }) => getMovies({ lastId: pageParam, limit }),
+        initialPageParam: -1,
+        getNextPageParam: (lastPage) => {
+            if (lastPage.length < limit) return undefined;
+            return lastPage[lastPage.length - 1].id;
+        },
+    });
+
+    const movies = data?.pages.flat() ?? [];
+
     const genres = ["All", "Sci-fi", "Comedy", "Drama", "Horror", "Romance"];
     const filteredMovies = useMemo(() => {
         return movies.filter((movie) => {
@@ -47,9 +48,12 @@ export default function Movies() {
             return matchesSearch && matchesGenre;
         });
     }, [search, selectedGenre, movies]);
-    if (loading) {
-        return <Loader />
+
+    if (isLoading) {
+        return <Loader />;
     }
+
+
     return (
         <div className="min-h-screen bg-gray-950 text-white pt-24 pb-16 px-5 sm:px-8">
             <div className="max-w-6xl mx-auto">
@@ -142,58 +146,73 @@ export default function Movies() {
 
                 {/* ── Movie Grid ── */}
                 {filteredMovies.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-                        {filteredMovies.map((movie) => (
-                            <Link
-                                key={movie.id}
-                                to={`/movies/${movie.id}`}
-                                className="group rounded-xl overflow-hidden bg-gray-900/50 border border-white/[0.04] hover:border-white/[0.1] transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/[0.03]"
-                            >
-                                {/* Poster */}
-                                <div className="relative aspect-[2/3] overflow-hidden">
-                                    <img
-                                        src={movie.poster}
-                                        alt={movie.title}
-                                        className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
-                                    />
-                                    {/* Gradient overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    {/* Rating badge */}
-                                    <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-xs font-medium text-amber-400">
-                                        ★ {movie.rating}
+                    <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                            {filteredMovies.map((movie) => (
+                                <Link
+                                    key={movie.id}
+                                    to={`/movies/${movie.id}`}
+                                    className="group rounded-xl overflow-hidden bg-gray-900/50 border border-white/[0.04] hover:border-white/[0.1] transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/[0.03]"
+                                >
+                                    {/* Poster */}
+                                    <div className="relative aspect-[2/3] overflow-hidden">
+                                        <img
+                                            src={movie.poster}
+                                            alt={movie.title}
+                                            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
+                                        />
+                                        {/* Gradient overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        {/* Rating badge */}
+                                        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-xs font-medium text-amber-400">
+                                            ★ {movie.rating}
+                                        </div>
+                                        {/* Duration badge */}
+                                        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[10px] font-medium text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            🕐 {movie.duration}
+                                        </div>
                                     </div>
-                                    {/* Duration badge */}
-                                    <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[10px] font-medium text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        🕐 {movie.duration}
-                                    </div>
-                                </div>
 
-                                {/* Info */}
-                                <div className="p-3.5">
-                                    <h3 className="text-sm font-semibold text-white truncate group-hover:text-amber-400 transition-colors duration-200">
-                                        {movie.title}
-                                    </h3>
-                                    <div className="flex items-center justify-between mt-1.5">
-                                        <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wider">
-                                            {movie.genre}
-                                        </span>
-                                        <span className="text-[11px] text-gray-600">
-                                            {new Date(movie.release_date).toLocaleDateString(
-                                                "en-US",
-                                                {
-                                                    month: "short",
-                                                    day: "numeric",
-                                                }
-                                            )}
-                                        </span>
+                                    {/* Info */}
+                                    <div className="p-3.5">
+                                        <h3 className="text-sm font-semibold text-white truncate group-hover:text-amber-400 transition-colors duration-200">
+                                            {movie.title}
+                                        </h3>
+                                        <div className="flex items-center justify-between mt-1.5">
+                                            <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wider">
+                                                {movie.genre}
+                                            </span>
+                                            <span className="text-[11px] text-gray-600">
+                                                {new Date(movie.release_date).toLocaleDateString(
+                                                    "en-US",
+                                                    {
+                                                        month: "short",
+                                                        day: "numeric",
+                                                    }
+                                                )}
+                                            </span>
+                                        </div>
+                                        <p className="mt-2 text-[11px] text-gray-500 leading-relaxed line-clamp-2">
+                                            {movie.description}
+                                        </p>
                                     </div>
-                                    <p className="mt-2 text-[11px] text-gray-500 leading-relaxed line-clamp-2">
-                                        {movie.description}
-                                    </p>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Load More Button */}
+                        {hasNextPage && (
+                            <div className="flex justify-center mt-10">
+                                <button
+                                    onClick={() => fetchNextPage()}
+                                    disabled={isFetchingNextPage}
+                                    className="px-8 py-3 rounded-xl text-sm font-semibold border transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-amber-500/10 text-amber-400 border-amber-500/25 hover:bg-amber-500/20 hover:border-amber-500/40"
+                                >
+                                    {isFetchingNextPage ? "Loading…" : "Load More Movies"}
+                                </button>
+                            </div>
+                        )}
+                    </>
                 ) : (
                     /* ── Empty State ── */
                     <div className="flex flex-col items-center justify-center py-24 text-center">

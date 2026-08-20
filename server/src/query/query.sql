@@ -52,5 +52,5 @@
 -- ('Deadpool', 'A sarcastic anti-hero.', '2016-02-12', '1h 48m', 'Action', 'deadpool.jpg', 8.0),
 -- ('Logan', 'An aging Wolverine fights.', '2017-03-03', '2h 17m', 'Action', 'logan.jpg', 8.1);
 
-ALTER TABLE users
-ADD COLUMN refresh_token TEXT NULL;
+-- ALTER TABLE users
+-- ADD COLUMN refresh_token TEXT NULL;
