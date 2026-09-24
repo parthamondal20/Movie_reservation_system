@@ -29,10 +29,16 @@ import authRoutes from "./routes/auth.route";
 import movieRoutes from "./routes/movie.route";
 import userRoutes from "./routes/user.route";
 import showRoutes from "./routes/shows.route";
+import seatRoutes from "./routes/seats.route";
+import bookingRoutes from "./routes/booking.route";
+import booked_seatsRoutes from "./routes/booked_seats.route";
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/movies", movieRoutes);
 app.use("/api/v1/shows", showRoutes)
+app.use("/api/v1/seats", seatRoutes)
 app.use(authenticateMiddleware);
+app.use("/api/v1/booking", bookingRoutes);
+app.use("/api/v1/booked_seats", booked_seatsRoutes);
 app.use("/api/v1/user", userRoutes);
 
 import adminMovieRoutes from "./admin/routes/movie.route";

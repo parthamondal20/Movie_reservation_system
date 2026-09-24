@@ -98,3 +98,10 @@ INSERT INTO shows (movie_id, screen_id, start_time, end_time) VALUES
 (5, 10, '2026-08-24 14:30', '2026-08-24 17:00'),
 (5, 4,  '2026-08-24 11:00', '2026-08-24 13:30'),
 (5, 4,  '2026-08-24 19:00', '2026-08-24 21:30');
+
+-- ══════════════════════════════════════
+-- 4. GENERATE SEATS for all screens
+-- ══════════════════════════════════════
+-- This uses the function from seats.model.sql to auto-populate
+-- all seats with proper labels (A1, A2...) and tier-based pricing.
+SELECT generate_seats_for_screen(id) FROM screens;

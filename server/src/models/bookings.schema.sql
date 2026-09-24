@@ -1,0 +1,12 @@
+-- ═══════════════════════════════════════════════════════════════════
+-- Bookings table: tracks which seats are booked for which show
+-- A seat not present here for a given show = 'available'
+-- ═══════════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS bookings (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE SET NULL,
+    show_id INT REFERENCES shows(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL DEFAULT 'booked',
+    total_amount INT NUT NULL,
+    booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
