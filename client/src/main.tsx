@@ -16,6 +16,7 @@ const PageNotFound = lazy(() => import("./pages/404Page.tsx"));
 const TheatersPage = lazy(() => import("./pages/theatersPage.tsx"));
 const Shows = lazy(() => import("./pages/Shows.tsx"));
 const SeatSelection = lazy(() => import("./pages/SeatSelection.tsx"));
+const Bookings = lazy(() => import("./pages/Bookings.tsx"));
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='' element={<App />}>
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
       <Route path='/movies/:movie_id/theaters' element={<TheatersPage />} />
       <Route path='/movies/:movie_id/shows' element={<Shows />} />
       <Route path='/movies/:movie_id/shows/:show_id/seats' element={<SeatSelection />} />
+      <Route path='/bookings' element={<Bookings />} />
       <Route path='*' element={<PageNotFound />} />
     </Route>
   )

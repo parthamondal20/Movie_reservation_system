@@ -1,0 +1,65 @@
+/* ── Card entrance ── */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.booking-card {
+    animation: fadeIn 0.35s ease-out forwards;
+    opacity: 0;
+}
+
+/* ── Ticket notch cutouts ── */
+.ticket-notch {
+    position: relative;
+}
+
+.ticket-notch::before,
+.ticket-notch::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgb(3, 7, 18);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.ticket-notch::before {
+    left: -9px;
+}
+
+.ticket-notch::after {
+    right: -9px;
+}
+
+.ticket-divider {
+    border-top: 2px dashed rgba(255, 255, 255, 0.05);
+}
+
+/* ── QR Modal ── */
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.qr-backdrop {
+    animation: modalFadeIn 0.15s ease-out;
+}
+
+.qr-card {
+    animation: modalSlideUp 0.2s ease-out;
+}
