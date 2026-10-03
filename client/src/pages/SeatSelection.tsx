@@ -9,6 +9,7 @@ import { useAppSelector } from "../app/hook/hook";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
 import "../styles/SeatSelection.css";
+import "../styles/BookingConfirmation.css";
 /* ──────────────────────────────────────────────
    Types
    ────────────────────────────────────────────── */
@@ -41,6 +42,12 @@ interface SelectedSeatInfo {
     row: number;
     col: number;
     tierColor: string;
+}
+
+interface BookingTicket {
+    ticket_number: string;
+    qrcode: string;
+    booking_id: number;
 }
 
 /* ──────────────────────────────────────────────
@@ -110,6 +117,9 @@ export default function SeatSelection() {
     const navigate = useNavigate();
     const { user } = useAppSelector((state) => state.auth);
     const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set());
+    const [bookingTicket, setBookingTicket] = useState<BookingTicket | null>(null);
+    const [confirmedSeats, setConfirmedSeats] = useState<SelectedSeatInfo[]>([]);
+    const [confirmedTotal, setConfirmedTotal] = useState<number>(0);
 
     /* ── Fetch show details ── */
     const {
@@ -253,11 +263,16 @@ export default function SeatSelection() {
         mutationKey: ["booking"],
         mutationFn: (params: { userId: number; showId: number; seats: typeof bookingSummary.seats }) =>
             bookSeats(params.userId, params.showId, params.seats),
-        onSuccess: () => {
-            toast.success(`Booking confirmed!`, {
-                style: { background: "#1f2937", color: "#f9fafb", border: "1px solid rgba(245,158,11,0.3)" },
-                icon: "🎬",
+        onSuccess: (data) => {
+            // Store confirmed snapshot before clearing selection
+            setConfirmedSeats([...bookingSummary.seats]);
+            setConfirmedTotal(bookingSummary.total);
+            setBookingTicket({
+                ticket_number: data?.data?.ticket_number ?? "",
+                qrcode: data?.data?.qrcode ?? "",
+                booking_id: data?.data?.booking_id ?? data?.data?.id ?? 0,
             });
+            setSelectedSeats(new Set());
         },
         onError: () => {
             toast.error("Failed to book seats", {
@@ -293,7 +308,6 @@ export default function SeatSelection() {
     /* ── Loading ── */
     if (isLoading) return <Loader />;
 
-    /* ── Error / Not Found ── */
     if (isError || !show) {
         return (
             <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center pt-16 px-5 text-center">
@@ -670,6 +684,200 @@ export default function SeatSelection() {
 
             {/* Spacer for mobile sticky bar */}
             <div className="lg:hidden h-28" />
+
+            {/* ── Booking Confirmation Modal ── */}
+            {bookingTicket && (
+                <BookingConfirmationModal
+                    ticket={bookingTicket}
+                    show={show}
+                    seats={confirmedSeats}
+                    total={confirmedTotal}
+                    onClose={() => setBookingTicket(null)}
+                />
+            )}
+        </div>
+    );
+}
+
+/* ══════════════════════════════════════════════
+   BOOKING CONFIRMATION MODAL
+   ══════════════════════════════════════════════ */
+function BookingConfirmationModal({
+    ticket,
+    show,
+    seats,
+    total,
+    onClose,
+}: {
+    ticket: BookingTicket;
+    show: ShowDetails;
+    seats: SelectedSeatInfo[];
+    total: number;
+    onClose: () => void;
+}) {
+    const navigate = useNavigate();
+    const seatLabels = seats.map((s) => s.label).join(", ");
+
+    return (
+        <div
+            className="booking-confirm-backdrop"
+            onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+            <div className="booking-confirm-modal">
+
+                {/* ── Header banner ── */}
+                <div className="booking-confirm-header">
+                    <div className="booking-confirm-logo">
+                        <span className="logo-cine">CINE</span><span className="logo-book">BOOK</span>
+                    </div>
+                    <p className="booking-confirm-tagline">Your movie experience starts here</p>
+                    {/* Film strip decoration */}
+                    <div className="film-strip">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="film-cell" />
+                        ))}
+                    </div>
+                </div>
+
+                {/* ── Body ── */}
+                <div className="booking-confirm-body">
+
+                    {/* Success icon */}
+                    <div className="success-icon-ring">
+                        <div className="success-icon-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <h2 className="booking-confirm-title">Booking Confirmed!</h2>
+                    <p className="booking-confirm-subtitle">Your tickets are ready. Enjoy your movie!</p>
+
+                    {/* Divider */}
+                    <div className="booking-confirm-divider" />
+
+                    {/* Movie info row */}
+                    <div className="booking-movie-row">
+                        <img
+                            src={show.movie_poster}
+                            alt={show.movie_title}
+                            className="booking-poster"
+                        />
+                        <div className="booking-movie-info">
+                            <h3 className="booking-movie-title">{show.movie_title}</h3>
+                            <div className="booking-movie-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0 1 18 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5c0 .621-.504 1.125-1.125 1.125m1.5 0h12m-12 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m12-3.75c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5m1.5 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h1.5m14.25 0h1.5" />
+                                </svg>
+                                <span>{show.theater_name}</span>
+                            </div>
+                            <div className="booking-movie-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z" />
+                                </svg>
+                                <span>{show.screen_number}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="booking-confirm-divider" />
+
+                    {/* Details grid */}
+                    <div className="booking-details-grid">
+                        <div className="booking-detail-cell">
+                            <div className="booking-detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="booking-detail-label">DATE</p>
+                                <p className="booking-detail-value">{new Date(show.start_time).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                            </div>
+                        </div>
+                        <div className="booking-detail-cell booking-detail-cell--right">
+                            <div className="booking-detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="booking-detail-label">TIME</p>
+                                <p className="booking-detail-value">{new Date(show.start_time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}</p>
+                            </div>
+                        </div>
+                        <div className="booking-detail-cell" style={{ borderTop: "1px solid rgba(30,41,59,0.6)" }}>
+                            <div className="booking-detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="booking-detail-label">SEATS</p>
+                                <p className="booking-detail-value">{seatLabels}</p>
+                            </div>
+                        </div>
+                        <div className="booking-detail-cell booking-detail-cell--right" style={{ borderTop: "1px solid rgba(30,41,59,0.6)" }}>
+                            <div className="booking-detail-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="booking-detail-label">TICKETS</p>
+                                <p className="booking-detail-value">{seats.length}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Total amount */}
+                    <div className="booking-amount-row">
+                        <div className="booking-amount-icon">₹</div>
+                        <div>
+                            <p className="booking-amount-label">Total amount paid</p>
+                            <p className="booking-amount-value">₹{total}</p>
+                        </div>
+                    </div>
+
+                    {/* Booking ID */}
+                    <div className="booking-id-row">
+                        <div className="booking-id-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="booking-id-label">Booking ID</p>
+                            <p className="booking-id-value">{ticket.ticket_number || `BK_${ticket.booking_id}`}</p>
+                        </div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="booking-confirm-actions">
+                        {ticket.qrcode && (
+                            <button
+                                className="booking-btn-primary"
+                                onClick={() => navigate("/bookings")}
+                            >
+                                View Your Ticket
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                </svg>
+                            </button>
+                        )}
+                        <button
+                            className="booking-btn-secondary"
+                            onClick={() => navigate("/bookings")}
+                        >
+                            Go to My Bookings
+                        </button>
+                    </div>
+
+                    <p className="booking-confirm-footer-note">Your ticket and QR code are available on the next page.</p>
+                </div>
+            </div>
         </div>
     );
 }

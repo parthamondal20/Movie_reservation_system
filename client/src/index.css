@@ -39,3 +39,39 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 5s ease-in-out infinite;
+}
+
+.glass-card {
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+    background: rgba(31, 41, 55, 0.7);
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.15);
+    transform: translateY(-4px);
+}
