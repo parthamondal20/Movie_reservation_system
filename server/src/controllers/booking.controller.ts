@@ -4,6 +4,7 @@ import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import QRCode from "qrcode";
 import crypto from "crypto";
+import redis from "../configs/redis";
 const bookSeats = asyncHandler(async (req, res) => {
     const { userId, showId, seats } = req.body;
     if (!userId || !showId) throw new ApiError(400, "Invalid Request");
